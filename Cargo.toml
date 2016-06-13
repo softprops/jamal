@@ -1,0 +1,8 @@
+[package]
+name = "jamal"
+version = "0.1.0"
+authors = ["softprops <d.tangren@gmail.com>"]
+
+[dependencies]
+serde_json = "0.7"
+serde_yaml = "0.2"
