@@ -14,7 +14,7 @@ pub enum Error {
     ParseFloat(ParseFloatError),
     InvalidValue,
     Json(JsonError),
-    Yaml(YamlError)
+    Yaml(YamlError),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -37,14 +37,15 @@ impl From<ParseFloatError> for Error {
 }
 
 pub fn from_str<T>(s: &str) -> Result<T>
-    where T: Deserialize {
-        if s.starts_with("{") || s.starts_with("[") {
-            let value = try!(serde_json::from_str(s));
-            Ok(value)
-        } else {
-            let value = try!(serde_yaml::from_str(s));
-            Ok(value)
-        }
+    where T: Deserialize
+{
+    if s.starts_with("{") || s.starts_with("[") {
+        let value = try!(serde_json::from_str(s));
+        Ok(value)
+    } else {
+        let value = try!(serde_yaml::from_str(s));
+        Ok(value)
+    }
 
 }
 
@@ -62,7 +63,7 @@ pub fn to_yaml(json: &JsonValue) -> Result<YamlValue> {
                 yaml_values.push(try!(to_yaml(&value)));
             }
             Ok(YamlValue::Array(yaml_values))
-        },
+        }
         &JsonValue::Object(ref value) => {
             let mut yaml_value = BTreeMap::new();
             for (k, v) in value {
@@ -87,7 +88,7 @@ pub fn to_json(yaml: &YamlValue) -> Result<JsonValue> {
                 json_values.push(json);
             }
             Ok(JsonValue::Array(json_values))
-        },
+        }
         &YamlValue::Hash(ref value) => {
             let mut json_value = BTreeMap::new();
             for (k, v) in value {
@@ -95,15 +96,15 @@ pub fn to_json(yaml: &YamlValue) -> Result<JsonValue> {
                     &YamlValue::String(ref key) => {
                         let json = try!(to_json(&v));
                         json_value.insert(key.clone(), json);
-                    },
-                    _ => return Err(Error::InvalidValue)
+                    }
+                    _ => return Err(Error::InvalidValue),
                 }
             }
             Ok(JsonValue::Object(json_value))
-        },
+        }
         &YamlValue::Alias(_) => Err(Error::InvalidValue), // not supported yet
         &YamlValue::Null => Ok(JsonValue::Null),
-        &YamlValue::BadValue => Err(Error::InvalidValue)
+        &YamlValue::BadValue => Err(Error::InvalidValue),
 
     }
 }
@@ -111,6 +112,5 @@ pub fn to_json(yaml: &YamlValue) -> Result<JsonValue> {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn it_works() {
-    }
+    fn it_works() {}
 }
