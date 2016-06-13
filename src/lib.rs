@@ -1,22 +1,51 @@
+extern crate serde;
 extern crate serde_json;
 extern crate serde_yaml;
 
 use serde_json::Value as JsonValue;
+use serde_json::Error as JsonError;
 use serde_yaml::Value as YamlValue;
+use serde_yaml::Error as YamlError;
 use std::num::ParseFloatError;
 use std::collections::BTreeMap;
+use serde::de::Deserialize;
 
 pub enum Error {
     ParseFloat(ParseFloatError),
-    InvalidValue
+    InvalidValue,
+    Json(JsonError),
+    Yaml(YamlError)
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
 
+impl From<YamlError> for Error {
+    fn from(error: YamlError) -> Error {
+        Error::Yaml(error)
+    }
+}
+
+impl From<JsonError> for Error {
+    fn from(error: JsonError) -> Error {
+        Error::Json(error)
+    }
+}
 impl From<ParseFloatError> for Error {
     fn from(error: ParseFloatError) -> Error {
         Error::ParseFloat(error)
     }
+}
+
+pub fn from_str<T>(s: &str) -> Result<T>
+    where T: Deserialize {
+        if s.starts_with("{") || s.starts_with("[") {
+            let value = try!(serde_json::from_str(s));
+            Ok(value)
+        } else {
+            let value = try!(serde_yaml::from_str(s));
+            Ok(value)
+        }
+
 }
 
 pub fn to_yaml(json: &JsonValue) -> Result<YamlValue> {
