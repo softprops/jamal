@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Error","represents potential errors that can happen during the transformation process"]],"fn":[["to_json","converts a `serde_yaml::Value` into a `serde_json::Value`"],["to_yaml","converts a `serde_json::Value` into a `serde_yaml::Value`"]],"type":[["Result","A result type with a fixed type for `jamal::Errors`"]]});
