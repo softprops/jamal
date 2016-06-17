@@ -10,6 +10,7 @@ use std::num::ParseFloatError;
 use std::collections::BTreeMap;
 use serde::de::Deserialize;
 
+#[derive(Debug)]
 pub enum Error {
     ParseFloat(ParseFloatError),
     InvalidValue,
@@ -30,23 +31,11 @@ impl From<JsonError> for Error {
         Error::Json(error)
     }
 }
+
 impl From<ParseFloatError> for Error {
     fn from(error: ParseFloatError) -> Error {
         Error::ParseFloat(error)
     }
-}
-
-pub fn from_str<T>(s: &str) -> Result<T>
-    where T: Deserialize
-{
-    if s.starts_with("{") || s.starts_with("[") {
-        let value = try!(serde_json::from_str(s));
-        Ok(value)
-    } else {
-        let value = try!(serde_yaml::from_str(s));
-        Ok(value)
-    }
-
 }
 
 pub fn to_yaml(json: &JsonValue) -> Result<YamlValue> {
@@ -105,12 +94,27 @@ pub fn to_json(yaml: &YamlValue) -> Result<JsonValue> {
         &YamlValue::Alias(_) => Err(Error::InvalidValue), // not supported yet
         &YamlValue::Null => Ok(JsonValue::Null),
         &YamlValue::BadValue => Err(Error::InvalidValue),
-
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeMap;
+    use super::serde_json;
+    use super::serde_yaml;
+    use super::{to_json, to_yaml};
+
     #[test]
-    fn it_works() {}
+    fn json_to_yaml() {
+        let input = serde_json::to_value(&vec!["foo"]);
+        let output = serde_yaml::Value::Array(vec![serde_yaml::Value::String("foo".to_owned())]);
+        assert_eq!(to_yaml(&input).unwrap(), output);
+    }
+
+    #[test]
+    fn yaml_to_json() {
+        let input = serde_yaml::to_value(&vec!["foo"]);
+        let output = serde_json::Value::Array(vec![serde_json::Value::String("foo".to_owned())]);
+        assert_eq!(to_json(&input).unwrap(), output);
+    }
 }
