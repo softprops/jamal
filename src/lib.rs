@@ -121,16 +121,41 @@ mod tests {
     use super::{to_json, to_yaml};
 
     #[test]
-    fn json_to_yaml() {
+    fn json_str_vec_to_yaml() {
         let input = serde_json::to_value(&vec!["foo"]);
         let output = serde_yaml::Value::Array(vec![serde_yaml::Value::String("foo".to_owned())]);
         assert_eq!(to_yaml(&input).unwrap(), output);
     }
 
     #[test]
-    fn yaml_to_json() {
+    fn yaml_str_vec_to_json() {
         let input = serde_yaml::to_value(&vec!["foo"]);
         let output = serde_json::Value::Array(vec![serde_json::Value::String("foo".to_owned())]);
         assert_eq!(to_json(&input).unwrap(), output);
     }
+
+    #[test]
+    fn json_obj_to_yaml() {
+        let mut json_obj = BTreeMap::new();
+        json_obj.insert("foo", 1);
+        let input = serde_json::to_value(&json_obj);
+
+        let mut yaml_obj = BTreeMap::new();
+        yaml_obj.insert(serde_yaml::Value::String("foo".to_owned()), serde_yaml::Value::Integer(1));
+        let output = serde_yaml::Value::Hash(yaml_obj);
+        assert_eq!(to_yaml(&input).unwrap(), output);
+    }
+
+    #[test]
+    fn yaml_obj_to_json() {
+        let mut yaml_obj = BTreeMap::new();
+        yaml_obj.insert("foo", 1);
+        let input = serde_yaml::to_value(&yaml_obj);
+
+        let mut json_obj = BTreeMap::new();
+        json_obj.insert("foo".to_owned(), serde_json::Value::I64(1));
+        let output = serde_json::Value::Object(json_obj);
+        assert_eq!(to_json(&input).unwrap(), output);
+    }
+
 }
