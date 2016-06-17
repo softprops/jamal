@@ -1,4 +1,5 @@
-# jamal
+# jamal [![Build Status](https://travis-ci.org/softprops/jamal.svg?branch=master)](https://travis-ci.org/softprops/jamal) [![Coverage Status](https://coveralls.io/repos/github/softprops/jamal/badge.svg?branch=master)](https://coveralls.io/github/softprops/jamal?branch=master)
+
 
 Jamal provides a bi-directional interface for transformations between json and yaml documents.
 
