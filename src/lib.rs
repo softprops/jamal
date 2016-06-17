@@ -1,4 +1,3 @@
-extern crate serde;
 extern crate serde_json;
 extern crate serde_yaml;
 
@@ -8,7 +7,6 @@ use serde_yaml::Value as YamlValue;
 use serde_yaml::Error as YamlError;
 use std::num::ParseFloatError;
 use std::collections::BTreeMap;
-use serde::de::Deserialize;
 
 #[derive(Debug)]
 pub enum Error {
