@@ -3,20 +3,42 @@ extern crate serde_json;
 extern crate serde_yaml;
 
 use serde_json::Value as JsonValue;
-use serde_json::Error as JsonError;
 use serde_yaml::Value as YamlValue;
-use serde_yaml::Error as YamlError;
+use std::error::Error as StdError;
 use std::num::ParseFloatError;
 use std::collections::BTreeMap;
 
 /// represents potential errors that can happen during the transformation process
 #[derive(Debug)]
 pub enum Error {
-    ///
+    /// Occurs when an attempt to parse a `serde_yaml::Real` as an `f64` fails
     ParseFloat(ParseFloatError),
-    ///
+    /// Occurs when a transformation is not supported
     InvalidValue,
 }
+
+impl StdError for Error {
+    fn description(&self) -> &str {
+        match *self {
+            Error::ParseFloat(ref e) => e.description(),
+            Error::InvalidValue => "invalid value"
+        }
+    }
+
+    fn cause(&self) -> Option<&StdError> {
+        match *self {
+            Error::ParseFloat(ref e) => Some(e),
+            _ => None,
+        }
+    }
+}
+
+impl ::std::fmt::Display for Error {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
 
 /// A result type with a fixed type for `jamal::Errors`
 pub type Result<T> = std::result::Result<T, Error>;
