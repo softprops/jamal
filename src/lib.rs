@@ -1,3 +1,4 @@
+//! Jamal provides a bi-directional interface for transformations between json and yaml documents.
 extern crate serde_json;
 extern crate serde_yaml;
 
@@ -8,27 +9,17 @@ use serde_yaml::Error as YamlError;
 use std::num::ParseFloatError;
 use std::collections::BTreeMap;
 
+/// represents potential errors that can happen during the transformation process
 #[derive(Debug)]
 pub enum Error {
+    ///
     ParseFloat(ParseFloatError),
+    ///
     InvalidValue,
-    Json(JsonError),
-    Yaml(YamlError),
 }
 
+/// A result type with a fixed type for `jamal::Errors`
 pub type Result<T> = std::result::Result<T, Error>;
-
-impl From<YamlError> for Error {
-    fn from(error: YamlError) -> Error {
-        Error::Yaml(error)
-    }
-}
-
-impl From<JsonError> for Error {
-    fn from(error: JsonError) -> Error {
-        Error::Json(error)
-    }
-}
 
 impl From<ParseFloatError> for Error {
     fn from(error: ParseFloatError) -> Error {
@@ -36,6 +27,7 @@ impl From<ParseFloatError> for Error {
     }
 }
 
+/// converts a `serde_json::Value` into a `serde_yaml::Value`
 pub fn to_yaml(json: &JsonValue) -> Result<YamlValue> {
     match json {
         &JsonValue::Null => Ok(YamlValue::Null),
@@ -62,6 +54,7 @@ pub fn to_yaml(json: &JsonValue) -> Result<YamlValue> {
     }
 }
 
+/// converts a `serde_yaml::Value` into a `serde_json::Value`
 pub fn to_json(yaml: &YamlValue) -> Result<JsonValue> {
     match yaml {
         &YamlValue::Real(ref value) => Ok(JsonValue::F64(try!(value.parse::<f64>()))),
