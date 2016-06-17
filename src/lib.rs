@@ -16,7 +16,7 @@ pub enum Error {
     /// Occurs when a transformation is requested for an invalid value
     InvalidValue,
     /// Occurs when an unsupported transformation is requested
-    UnsupportedValue
+    UnsupportedValue(YamlValue)
 }
 
 impl StdError for Error {
@@ -24,7 +24,7 @@ impl StdError for Error {
         match *self {
             Error::ParseFloat(ref e) => e.description(),
             Error::InvalidValue => "invalid value",
-            Error::UnsupportedValue => "supported value",
+            Error::UnsupportedValue(_) => "supported value",
         }
     }
 
@@ -102,12 +102,12 @@ pub fn to_json(yaml: &YamlValue) -> Result<JsonValue> {
                         let json = try!(to_json(&v));
                         json_value.insert(key.clone(), json);
                     }
-                    _ => return Err(Error::InvalidValue),
+                    unsupported => return Err(Error::UnsupportedValue(unsupported.clone())),
                 }
             }
             Ok(JsonValue::Object(json_value))
         }
-        &YamlValue::Alias(_) => Err(Error::InvalidValue), // not supported yet
+        alias @ &YamlValue::Alias(_) => Err(Error::UnsupportedValue(alias.clone())),
         &YamlValue::Null => Ok(JsonValue::Null),
         &YamlValue::BadValue => Err(Error::InvalidValue),
     }
