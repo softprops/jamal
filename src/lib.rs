@@ -158,4 +158,17 @@ mod tests {
         assert_eq!(to_json(&input).unwrap(), output);
     }
 
+    #[test]
+    fn json_bool_to_yaml() {
+        let input = serde_json::to_value(&true);
+        let output = serde_yaml::Value::Boolean(true);
+        assert_eq!(to_yaml(&input).unwrap(), output);
+    }
+
+    #[test]
+    fn yaml_bool_to_json() {
+        let input = serde_yaml::to_value(&true);
+        let output = serde_json::Value::Bool(true);
+        assert_eq!(to_json(&input).unwrap(), output);
+    }
 }
