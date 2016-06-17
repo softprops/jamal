@@ -6,7 +6,7 @@ description = "bi-directional transformations between json and yaml documents"
 documentation = "https://softprops.github.io/jamal"
 homepage = "https://github.com/softprops/jamal"
 repository = "https://github.com/softprops/jamal"
-keywords = ["hyper", "github"]
+keywords = ["json", "yaml", "serde"]
 license = "MIT"
 
 [dependencies]
