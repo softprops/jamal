@@ -13,15 +13,18 @@ use std::collections::BTreeMap;
 pub enum Error {
     /// Occurs when an attempt to parse a `serde_yaml::Real` as an `f64` fails
     ParseFloat(ParseFloatError),
-    /// Occurs when a transformation is not supported
+    /// Occurs when a transformation is requested for an invalid value
     InvalidValue,
+    /// Occurs when an unsupported transformation is requested
+    UnsupportedValue
 }
 
 impl StdError for Error {
     fn description(&self) -> &str {
         match *self {
             Error::ParseFloat(ref e) => e.description(),
-            Error::InvalidValue => "invalid value"
+            Error::InvalidValue => "invalid value",
+            Error::UnsupportedValue => "supported value",
         }
     }
 
