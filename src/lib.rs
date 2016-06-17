@@ -16,7 +16,7 @@ pub enum Error {
     /// Occurs when a transformation is requested for an invalid value
     InvalidValue,
     /// Occurs when an unsupported transformation is requested
-    UnsupportedValue(YamlValue)
+    UnsupportedValue(YamlValue),
 }
 
 impl StdError for Error {
@@ -41,7 +41,6 @@ impl ::std::fmt::Display for Error {
         write!(f, "{:?}", self)
     }
 }
-
 
 /// A result type with a fixed type for `jamal::Errors`
 pub type Result<T> = std::result::Result<T, Error>;
@@ -141,7 +140,8 @@ mod tests {
         let input = serde_json::to_value(&json_obj);
 
         let mut yaml_obj = BTreeMap::new();
-        yaml_obj.insert(serde_yaml::Value::String("foo".to_owned()), serde_yaml::Value::Integer(1));
+        yaml_obj.insert(serde_yaml::Value::String("foo".to_owned()),
+                        serde_yaml::Value::Integer(1));
         let output = serde_yaml::Value::Hash(yaml_obj);
         assert_eq!(to_yaml(&input).unwrap(), output);
     }
